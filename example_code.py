@@ -3,8 +3,8 @@ import torch
 import abc_py
 import os
 
-folder = 'train_set'
-for file in os.listdir(folder):
+folder = 'train_aig'
+for file in os.listdir(folder)[:1]:
     state = os.path.join(folder, file)
     # 1. 初始化 abc 接口
     _abc = abc_py.AbcInterface()
@@ -77,7 +77,8 @@ for file in os.listdir(folder):
     # 35. 将节点数量存储在数据字典中
     data['nodes'] = numNodes
 
-    # print(data)
+    for key, value in data.items():
+        print(value.shape)
 
 def get_graph(aig_file):
     _abc = abc_py.AbcInterface()
@@ -120,4 +121,4 @@ def get_graph(aig_file):
     data['node_type'] = torch.tensor(data['node_type'])
     data['num_inverted_predecessors'] = torch.tensor(data['num_inverted_predecessors'])
     data['nodes'] = numNodes
-    return data
+    print(data)
