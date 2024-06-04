@@ -1,51 +1,69 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCNConv
+import torch.nn.functional as F
+import pickle
+from torch_geometric.data import Data, InMemoryDataset
 
-class GCN(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim):
-        super(GCN, self).__init__()
-        self.conv1 = GCNConv(input_dim, hidden_dim)
-        self.conv2 = GCNConv(hidden_dim, output_dim)
-        self.fc = nn.Linear(output_dim, 1)
+# Define CustomDataset class again
+class CustomDataset(InMemoryDataset):
+    def __init__(self, root, data_list, transform=None, pre_transform=None):
+        self.data_list = data_list
+        super(CustomDataset, self).__init__(root, transform, pre_transform)
+        self.data, self.slices = self.collate(data_list)
 
-    def forward(self, x, edge_index):
+    @property
+    def raw_file_names(self):
+        return []
+
+    @property
+    def processed_file_names(self):
+        return []
+
+    def download(self):
+        pass
+
+    def process(self):
+        pass
+
+# Load merged graph data and labels
+dataset = torch.load('data/merged_graph_data.pt')
+with open('data/merged_labels.pkl', 'rb') as f:
+    labels = pickle.load(f)
+
+# Create data loader
+train_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+class GNN(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels):
+        super(GNN, self).__init__()
+        self.conv1 = GCNConv(in_channels, hidden_channels)
+        self.conv2 = GCNConv(hidden_channels, out_channels)
+        self.fc = torch.nn.Linear(out_channels, 1)  # Output is a single number
+
+    def forward(self, data):
+        x, edge_index = data.x, data.edge_index
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = self.conv2(x, edge_index)
         x = F.relu(x)
-        x = torch.mean(x, dim=0)  # Graph Pooling
+        x = torch.mean(x, dim=0)  # Mean of node features
         x = self.fc(x)
         return x
 
-# 构建图神经网络模型
-input_dim = 710
-hidden_dim = 128
-output_dim = 64
-model = GCN(input_dim, hidden_dim, output_dim)
-
-# 定义损失函数和优化器
-criterion = nn.MSELoss()
+model = GNN(in_channels=2, hidden_channels=64, out_channels=32)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+criterion = torch.nn.MSELoss()
 
-# 准备输入数据
-node_features = torch.randn(710, input_dim)  # 节点特征
-edge_index = torch.tensor([[0, 1, 2], [1, 2, 0]], dtype=torch.long)  # 边的索引
-target = torch.tensor([7], dtype=torch.float32)  # 目标数字
-
-# 训练模型
-epochs = 100
-for epoch in range(epochs):
-    optimizer.zero_grad()
-    output = model(node_features, edge_index)
-    loss = criterion(output, target)
-    loss.backward()
-    optimizer.step()
-
-    if (epoch+1) % 10 == 0:
-        print(f"Epoch {epoch+1}/{epochs}, Loss: {loss.item()}")
-
-# 进行预测
-output = model(node_features, edge_index)
-print("预测结果:", output.item())
+model.train()
+for epoch in range(20):
+    total_loss = 0
+    for i, data in enumerate(train_loader):
+        optimizer.zero_grad()
+        out = model(data)
+        target = torch.tensor([labels[i]], dtype=torch.float32)
+        loss = criterion(out, target)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+    print(f'Epoch {epoch+1}, Loss: {total_loss/len(train_loader)}')

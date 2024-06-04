@@ -1,11 +1,6 @@
 project_data/
 project_data2/
-train_aig/
-train_graph/
-train_label/
-train_log/
-task1.zip
-train_set.zip
-train_label.zip
-train_graph.zip
 abc.history
+data/
+tmp_data/
+processed/

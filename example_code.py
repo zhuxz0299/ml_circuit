@@ -77,8 +77,12 @@ for file in os.listdir(folder)[:1]:
     # 35. 将节点数量存储在数据字典中
     data['nodes'] = numNodes
 
-    for key, value in data.items():
-        print(value.shape)
+    # for key, value in data.items():
+    #     if isinstance(value, torch.Tensor):
+    #         print(key, value.size())
+    #     else:
+    #         print(key, value)
+    print(data)
 
 def get_graph(aig_file):
     _abc = abc_py.AbcInterface()
