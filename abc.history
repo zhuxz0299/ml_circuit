@@ -1,4 +1,3 @@
-read train_aig/i8_144445.aig
 read train_aig/adder_4412311.aig
 read train_aig/max_01630.aig
 read train_aig/priority_01324640.aig
@@ -998,3 +997,4 @@ read train_aig/alu2_0013241.aig
 strash
 read train_aig/apex3_604646554.aig
 read train_aig/priority_010515121.aig
+read /home/zxz/course-project/ml_integrated_circuit_design/project/tmp_data/train_aig/adder_0000341036.aig

@@ -48,12 +48,16 @@ def get_graph(aig_file):
     return data
     
 
-graph_folder = 'train_graph'
-aig_folder = 'train_aig'
-if not os.path.exists(graph_folder):
-    os.makedirs(graph_folder)
-for aig_file in tqdm(os.listdir(aig_folder)):
-    if aig_file.endswith('.aig'):
-        data = get_graph(os.path.join(aig_folder, aig_file))
-        graph_file = os.path.join(graph_folder, aig_file.replace('.aig', '.pt'))
-        torch.save(data, graph_file)
+def main():
+    graph_folder = 'train_graph'
+    aig_folder = 'train_aig'
+    if not os.path.exists(graph_folder):
+        os.makedirs(graph_folder)
+    for aig_file in tqdm(os.listdir(aig_folder)):
+        if aig_file.endswith('.aig'):
+            data = get_graph(os.path.join(aig_folder, aig_file))
+            graph_file = os.path.join(graph_folder, aig_file.replace('.aig', '.pt'))
+            torch.save(data, graph_file)
+
+if __name__ == "__main__":
+    main()
