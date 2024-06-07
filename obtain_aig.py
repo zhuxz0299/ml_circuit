@@ -8,8 +8,8 @@ def generate_aig(state, target):
     circuitName, actions = state.split('_')
     circuitPath = './InitialAIG/train/' + circuitName + '.aig'
     libFile = './lib/7nm/7nm.lib'
-    logFile = os.path.join('train_log', circuitName + '.log') 
-    nextState = os.path.join('train_aig', state + '.aig') 
+    logFile = os.path.join('tmp_data/train_log', circuitName + '.log') 
+    nextState = os.path.join('tmp_data/train_aig', state + '.aig') 
 
     synthesisOpToPosDic = {
         0: "refactor",
