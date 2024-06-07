@@ -49,10 +49,8 @@ def get_graph(aig_file):
     
 
 def main():
-    graph_folder = 'train_graph'
-    aig_folder = 'train_aig'
-    if not os.path.exists(graph_folder):
-        os.makedirs(graph_folder)
+    graph_folder = 'tmp_data/train_graph'
+    aig_folder = 'tmp_data/train_aig'
     for aig_file in tqdm(os.listdir(aig_folder)):
         if aig_file.endswith('.aig'):
             data = get_graph(os.path.join(aig_folder, aig_file))

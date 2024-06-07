@@ -37,14 +37,14 @@ def merge_and_split_datasets(train_graph_folder, train_label_folder, output_fold
             test_dataset.append(data)
 
     os.makedirs(output_folder, exist_ok=True)
-    torch.save(train_dataset, os.path.join(output_folder, 'train_dataset.pt'))
-    torch.save(val_dataset, os.path.join(output_folder, 'val_dataset.pt'))
-    torch.save(test_dataset, os.path.join(output_folder, 'test_dataset.pt'))
+    torch.save(train_dataset, os.path.join(output_folder, 'train_dataset_task2.pt'))
+    torch.save(val_dataset, os.path.join(output_folder, 'val_dataset_task2.pt'))
+    torch.save(test_dataset, os.path.join(output_folder, 'test_dataset_task2.pt'))
 
 
 
 if __name__ == "__main__":
     train_graph_folder = 'tmp_data/train_graph'
-    train_label_folder = 'tmp_data/train_label'
+    train_label_folder = 'tmp_data/train_label_task2'
     output_folder = 'data'
     merge_and_split_datasets(train_graph_folder, train_label_folder, output_folder)

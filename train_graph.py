@@ -6,12 +6,7 @@ import pickle
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.nn import BatchNorm
 
-# Load merged graph data and labels
-train_dataset = torch.load('data/train_dataset.pt')
-val_dataset = torch.load('data/val_dataset.pt')
-batch_size = 1
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 # class GNN(torch.nn.Module):
@@ -68,10 +63,6 @@ class GNN(torch.nn.Module):
         x = self.fc(x)
         return x
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GNN(in_channels=2, hidden_channels=64, out_channels=32).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-criterion = torch.nn.MSELoss()
 
         
 def train(model, train_loader, optimizer, criterion, device):
@@ -98,30 +89,81 @@ def evaluate(model, val_loader, criterion, device):
             total_loss += loss.item()
     return total_loss / len(val_loader)
 
-num_epochs = 10
-best_val_loss = float('inf')  # 初始化最佳验证损失为无穷大
-best_model_path = 'checkpoints/best_model.pth'  # 保存最佳模型的路径
+def train_task1():
+    # Load merged graph data and labels
+    train_dataset = torch.load('data/train_dataset.pt')
+    val_dataset = torch.load('data/val_dataset.pt')
+    batch_size = 1
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-for epoch in range(num_epochs):
-    train_loss = train(model, train_loader, optimizer, criterion, device)
-    val_loss = evaluate(model, val_loader, criterion, device)
-    
-    print(f'Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}')
-    
-    # 如果当前验证损失低于最佳验证损失，则更新最佳验证损失并保存模型
-    if val_loss < best_val_loss:
-        best_val_loss = val_loss
-        torch.save(model.state_dict(), best_model_path)
-        print(f'Saving best model with validation loss: {val_loss:.4f}')
+    model = GNN(in_channels=2, hidden_channels=64, out_channels=32).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    criterion = torch.nn.MSELoss()
 
-# Print predictions for a batch in validation set
-model.eval()
-with torch.no_grad():
-    total_loss = 0
-    for data in val_loader:
-        data = data.to(device)
-        out = model(data)
-        loss = criterion(out, data.y)
-        total_loss += loss.item()
-    print(f'Validation Loss: {total_loss/len(val_loader)}')
-        # print(f'Predicted: {out.item()}, Actual: {data.y.item()}')
+    num_epochs = 10
+    best_val_loss = float('inf')  # 初始化最佳验证损失为无穷大
+    best_model_path = 'checkpoints/best_model.pth'  # 保存最佳模型的路径
+
+    for epoch in range(num_epochs):
+        train_loss = train(model, train_loader, optimizer, criterion, device)
+        val_loss = evaluate(model, val_loader, criterion, device)
+        print(f'Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}')
+        # 如果当前验证损失低于最佳验证损失，则更新最佳验证损失并保存模型
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), best_model_path)
+            print(f'Saving best model with validation loss: {val_loss:.4f}')
+
+    # Print predictions for a batch in validation set
+    model.eval()
+    with torch.no_grad():
+        total_loss = 0
+        for data in val_loader:
+            data = data.to(device)
+            out = model(data)
+            loss = criterion(out, data.y)
+            total_loss += loss.item()
+        print(f'Validation Loss: {total_loss/len(val_loader)}')
+            # print(f'Predicted: {out.item()}, Actual: {data.y.item()}')
+
+def train_task2():
+    # Load merged graph data and labels
+    train_dataset = torch.load('data/train_dataset_task2.pt')
+    val_dataset = torch.load('data/val_dataset_task2.pt')
+    batch_size = 1
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    model = GNN(in_channels=2, hidden_channels=64, out_channels=32).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    criterion = torch.nn.MSELoss()
+
+    num_epochs = 20
+    best_val_loss = float('inf')  # 初始化最佳验证损失为无穷大
+    best_model_path = 'checkpoints/best_model_task2.pth'  # 保存最佳模型的路径
+
+    for epoch in range(num_epochs):
+        train_loss = train(model, train_loader, optimizer, criterion, device)
+        val_loss = evaluate(model, val_loader, criterion, device)
+        print(f'Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}')
+        # 如果当前验证损失低于最佳验证损失，则更新最佳验证损失并保存模型
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), best_model_path)
+            print(f'Saving best model with validation loss: {val_loss:.4f}')
+
+    # Print predictions for a batch in validation set
+    model.eval()
+    with torch.no_grad():
+        total_loss = 0
+        for data in val_loader:
+            data = data.to(device)
+            out = model(data)
+            loss = criterion(out, data.y)
+            total_loss += loss.item()
+        print(f'Validation Loss: {total_loss/len(val_loader)}')
+            # print(f'Predicted: {out.item()}, Actual: {data.y.item()}')
+
+if __name__ == "__main__":
+    train_task2()

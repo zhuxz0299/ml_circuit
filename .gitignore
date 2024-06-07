@@ -5,3 +5,4 @@ data/
 tmp_data/
 processed/
 other/
+__pycache__/
