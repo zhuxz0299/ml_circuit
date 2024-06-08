@@ -21,19 +21,34 @@ class GNN(torch.nn.Module):
         x = torch.mean(x, dim=0)  # Mean of node features
         x = self.fc(x)
         return x
+    
+class Inference:
+    def __init__(self,model_path='checkpoints/best_model.pth'):
+        self.model = GNN(in_channels=2, hidden_channels=64, out_channels=32)
+        self.model.load_state_dict(torch.load(model_path))
+        self.model.eval()
 
-def inference(aig_path):
-    model_path = 'checkpoints/best_model.pth'
-    graph = get_graph(aig_path)
-    data = convert_dict_to_data(graph, 0)
-    model = GNN(in_channels=2, hidden_channels=64, out_channels=32)
-    model.load_state_dict(torch.load(model_path))
-    model.eval()
-    loader = DataLoader([data], batch_size=1)
-    for data in loader:
-        out = model(data)
-        print(out)
+    def inf(self,aig_path):
+        graph = get_graph(aig_path)
+        data = convert_dict_to_data(graph, 0)
+        loader = DataLoader([data], batch_size=1)
+        for data in loader:
+            out = self.model(data)
+            print(out)
+        return out
+    
+# def inference(aig_path, model_path):
+#     model_path = 'checkpoints/best_model.pth'
+#     graph = get_graph(aig_path)
+#     data = convert_dict_to_data(graph, 0)
+#     model = GNN(in_channels=2, hidden_channels=64, out_channels=32)
+#     model.load_state_dict(torch.load(model_path))
+#     model.eval()
+#     loader = DataLoader([data], batch_size=1)
+#     for data in loader:
+#         out = model(data)
+#         print(out)
 
 if __name__ == "__main__":
     aig_path = '/home/zxz/course-project/ml_integrated_circuit_design/project/tmp_data/train_aig/adder_0000341036.aig'
-    inference(aig_path)
+    inference(aig_path,'/root/ml_circuit/checkpoints/best_model_task2.pth')

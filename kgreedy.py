@@ -50,7 +50,7 @@
 import os
 import random
 from multiprocessing import Pool
-from inference import GNN, inference
+from inference import GNN, Inference
 
 synthesisOpToPosDic={
     0: 'refactor',
@@ -62,10 +62,12 @@ synthesisOpToPosDic={
     6: 'balance',
 }
 action_list=['refactor', 'refactor -z', 'rewrite', 'rewrite -z', 'resub', 'resub -z', 'balance']
+model_dict_path = '/root/ml_circuit/checkpoints/best_model.pth' # model 1
 
-def model(path):
-    # 返回0-1间的随机数，用于检验搜索算法逻辑是否正确
-    return random.random()
+infer=Inference(model_dict_path)
+
+def model(aig_path):
+    return infer.inf(aig_path)
 
 def run_simulation(params):
     step, candidate, action, libFile, AIG_PATH, logFile = params

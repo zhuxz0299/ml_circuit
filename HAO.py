@@ -1,6 +1,7 @@
 # Hierarchical Action Optimizer (HAO)
 import os
 import random
+from inference import GNN, Inference
 random.seed(42)
 libFile = '/root/ml_circuit/lib/7nm/7nm.lib'
 AIG_PATH = "/root/ml_circuit/search/HAO/alu4/alu4.aig"
@@ -19,9 +20,12 @@ synthesisOpToPosDic = {
 
 action_list=['refactor', 'refactor -z', 'rewrite', 'rewrite -z', 'resub', 'resub -z', 'balance']
 
-def model(file_path):
-    # 返回0-1间的随机数，用于检验搜索算法逻辑是否正确
-    return random.random()
+model_dict_path = '/root/ml_circuit/checkpoints/best_model.pth' # model 1
+infer=Inference(model_dict_path)
+
+def model(aig_path):
+    return infer.inf(aig_path)
+
 
 def apply_action(aig, idx:int):
     return aig[:-4] + str(idx) + ".aig" if '_' in aig.split('/')[-1] else aig[:-4] + "_" + str(idx) + ".aig"
