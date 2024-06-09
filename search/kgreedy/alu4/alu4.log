@@ -1,8 +1,5 @@
-ABC command line: "read /root/ml_circuit/InitialAIG/test/alu4.aig;balance;balance;rewrite;refactor;refactor -z;refactor -z;refactor -z;refactor;resub;resub;read_lib /root/ml_circuit/lib/7nm/7nm.lib;write /root/ml_circuit/InitialAIG/test/alu4_6620111044.aig;print_stats".
+ABC command line: "read alu4_0.aig; read_lib ./lib/7nm/7nm.lib; map; topo; stime".
 
-Library "asap7sc7p5t_22b_AO_RVT_SS_170906" from "/root/ml_circuit/lib/7nm/7nm.lib" has 155 cells (0 skipped: 0 seq; 0 tri-state; 0 no func; 0 dont_use).  Time =     0.65 sec
+Library "asap7sc7p5t_22b_AO_RVT_SS_170906" from "./lib/7nm/7nm.lib" has 155 cells (0 skipped: 0 seq; 0 tri-state; 0 no func; 0 dont_use).  Time =     0.41 sec
 Warning: Detected 2 multi-output gates (for example, "FAx1_ASAP7_75t_R").
-[1;37m/root/ml_circuit/InitialAIG/test/alu4:[0m i/o =   14/    8  lat =    0  and =    652  lev = 37
-7
-37
-
+WireLoad = "none"  [1;33mGates =    528[0m ( 15.0 %)   [1;32mCap =  0.8 ff[0m (  2.7 %)   [1;36mArea =      608.16[0m ( 85.0 %)   [1;35mDelay =   673.03 ps[0m  (  8.9 %)               

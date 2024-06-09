@@ -34,10 +34,10 @@ class Inference:
         loader = DataLoader([data], batch_size=1)
         for data in loader:
             out = self.model(data)
-            print(out)
-        return out
+            #print(out)
+            return out.item()
     
-# def inference(aig_path, model_path):
+# def inference(aig_path):
 #     model_path = 'checkpoints/best_model.pth'
 #     graph = get_graph(aig_path)
 #     data = convert_dict_to_data(graph, 0)
@@ -47,8 +47,8 @@ class Inference:
 #     loader = DataLoader([data], batch_size=1)
 #     for data in loader:
 #         out = model(data)
-#         print(out)
+#         print(out.item())
 
 if __name__ == "__main__":
     aig_path = '/home/zxz/course-project/ml_integrated_circuit_design/project/tmp_data/train_aig/adder_0000341036.aig'
-    inference(aig_path,'/root/ml_circuit/checkpoints/best_model_task2.pth')
+    inference(aig_path)
